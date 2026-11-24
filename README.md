@@ -70,13 +70,39 @@ CRITICAL - kernel is no longer covered by Livepatch
 ```icinga2
 object CheckCommand "canonical-livepatch-status" {
     import "plugin-check-command"
-    command = [ PluginDir + "/check_canonical_livepatch_status.py" ]
+    command = [ PluginDir + "/check_canonical_livepatch_status" ]
+    timeout = 1m
     arguments += {
-        "--warning-seconds" = "$livepatch_warning_seconds$"
-        "--critical-seconds" = "$livepatch_critical_seconds$"
-        "--patching-warning-seconds" = "$livepatch_patching_warning_seconds$"
-        "--pending-warning-seconds" = "$livepatch_pending_warning_seconds$"
-        "--state-file" = "$livepatch_state_file$"
+        "--patching-warning-seconds" = {
+            description = "warn when 'patching the kernel' lasts longer than this (default: 7200)"
+            repeat_key = false
+            required = false
+            value = "$livepatch_patching_warning_seconds$"
+        }
+        "--pending-warning-seconds" = {
+            description = "warn when patches are downloaded but the module is not inserted for longer than this (default: 7200)"
+            repeat_key = false
+            required = false
+            value = "$livepatch_pending_warning_seconds$"
+        }
+        "--state-file" = {
+            description = "file remembering since when a patch is in progress (default: /tmp/check_canonical_livepatch_status.state)"
+            repeat_key = false
+            required = false
+            value = "$livepatch_state_file$"
+        }
+        "-c" = {
+            description = "fail when the last check with the Livepatch server is older than this (default: 21600)"
+            repeat_key = false
+            required = false
+            value = "$livepatch_critical_seconds$"
+        }
+        "-w" = {
+            description = "warn when the last check with the Livepatch server is older than this (default: 10800)"
+            repeat_key = false
+            required = false
+            value = "$livepatch_warning_seconds$"
+        }
     }
 }
 ```
