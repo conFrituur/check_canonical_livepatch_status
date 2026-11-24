@@ -420,7 +420,7 @@ def test_run_status_returns_stdout(state_file) -> None:
     check = make_check(state_file)
     with patch("subprocess.run", return_value=completed("hello")) as run:
         assert check.run_status() == "hello"
-    assert run.call_args.args[0] == ["canonical-livepatch", "status"]
+    assert run.call_args.args[0] == ["canonical-livepatch", "status", "--format", "humane"]
 
 
 @pytest.mark.parametrize(

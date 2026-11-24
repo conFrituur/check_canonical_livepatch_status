@@ -116,10 +116,10 @@ class CheckCanonicalLivepatchStatus:
 
     def run_status(self) -> str:
         """Run `canonical-livepatch status` once and return its output."""
-        self.log.debug("Running: %s status", self.COMMAND)
+        self.log.debug("Running: %s status --format humane", self.COMMAND)
         try:
             result = subprocess.run(
-                [self.COMMAND, "status"],
+                [self.COMMAND, "status", "--format", "humane"],
                 capture_output=True,
                 text=True,
                 timeout=self.COMMAND_TIMEOUT,

@@ -35,7 +35,7 @@ options:
   --verbose, -v
 ```
 
-The plugin always runs `canonical-livepatch status` directly (it does not call sudo), so it must run as a user that is allowed to execute the client.
+The plugin always runs `canonical-livepatch status --format humane` directly (the format is forced because the client switches to YAML when its output is not a terminal) (it does not call sudo), so it must run as a user that is allowed to execute the client.
 
 All thresholds are optional. Without `-w`/`-c` the age of `last check` is not evaluated.
 
