@@ -1,0 +1,75 @@
+# Check_Canonical_Livepatch_Status
+
+Icinga/Nagios plugin that checks the Canonical Livepatch client (`canonical-livepatch status`). It requires Python >=3.12 and has no third-party runtime dependencies.
+
+The check runs the client once and evaluates the `kernel state`, `patch state`, `server check-in` and (optionally) `last check` lines of that single output. The worst state wins. Based on the [official status documentation](https://ubuntu.com/security/livepatch/docs/client/how-to-guides/operations/check-client-status/).
+
+>**AI NOTICE:** This code was derived from my other check plugins and altered with AI. All code has been reviewed and tested by me
+
+## Usage
+
+```console
+foo@bar:~$ uv run check_canonical_livepatch_status.py --help
+usage: check_canonical_livepatch_status.py [-h] [--warning-seconds WARNING_SECONDS]
+                                           [--critical-seconds CRITICAL_SECONDS]
+                                           [--patching-warning-seconds PATCHING_WARNING_SECONDS]
+                                           [--pending-warning-seconds PENDING_WARNING_SECONDS]
+                                           [--state-file STATE_FILE] [--verbose]
+
+Check the Canonical Livepatch client status
+
+options:
+  -h, --help            show this help message and exit
+  --warning-seconds, -w WARNING_SECONDS
+                        warn when the last check with the Livepatch server is older than this
+  --critical-seconds, -c CRITICAL_SECONDS
+                        fail when the last check with the Livepatch server is older than this
+  --patching-warning-seconds PATCHING_WARNING_SECONDS
+                        warn when 'patching the kernel' lasts longer than this (default: 7200)
+  --pending-warning-seconds PENDING_WARNING_SECONDS
+                        warn when patches are downloaded but the module is not inserted for longer
+                        than this (default: 7200)
+  --state-file STATE_FILE
+                        file remembering since when a patch is in progress (default:
+                        /tmp/check_canonical_livepatch_status.state)
+  --verbose, -v
+```
+
+The plugin always runs `canonical-livepatch status` directly (it does not call sudo), so it must run as a user that is allowed to execute the client.
+
+All thresholds are optional. Without `-w`/`-c` the age of `last check` is not evaluated.
+
+## States
+
+| Level | Output |
+|---|---|
+| OK | kernel series covered; all patches applied; no patches available; kernel upgraded after a reboot; patching in progress or downloaded-not-inserted (within limits) |
+| WARNING | kernel covered only until a date (reboot needed); unpatchable vulnerability (upgrade and reboot); patching stalled; patches downloaded but not inserted for too long; `last check` older than `-w` |
+| CRITICAL | kernel not covered / no longer covered / coverage ended; kernel bug detected; crash; unknown error; signature, certificate, extraction or confirmation failures; server check-in not `succeeded`; `last check` older than `-c` |
+| UNKNOWN | client cannot be run or exits non-zero (for example "Machine is not enabled"); unrecognized or missing state; state file not writable |
+
+The client does not report how long a state has lasted, so stalls are detected with a small state file written by the check. Run the check periodically (the Icinga check interval is enough). Any non-progress state removes the file.
+
+Example output:
+
+```
+OK - kernel 5.4.0-216.236-generic: kernel series 5.4 is covered by Livepatch; all applicable live kernel patch modules applied (patch version 113.1)
+WARNING - patching the kernel for 3 hours (limit 2 hours), check manually
+CRITICAL - kernel is no longer covered by Livepatch
+```
+
+## Icinga CheckCommand
+
+```icinga2
+object CheckCommand "canonical-livepatch-status" {
+    import "plugin-check-command"
+    command = [ PluginDir + "/check_canonical_livepatch_status.py" ]
+    arguments += {
+        "--warning-seconds" = "$livepatch_warning_seconds$"
+        "--critical-seconds" = "$livepatch_critical_seconds$"
+        "--patching-warning-seconds" = "$livepatch_patching_warning_seconds$"
+        "--pending-warning-seconds" = "$livepatch_pending_warning_seconds$"
+        "--state-file" = "$livepatch_state_file$"
+    }
+}
+```

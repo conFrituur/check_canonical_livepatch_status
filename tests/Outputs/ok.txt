@@ -1,0 +1,8 @@
+last check: 52 seconds ago
+kernel: 5.4.0-216.236-generic
+server check-in: succeeded
+kernel state: ✓ kernel series 5.4 is covered by Livepatch
+patch state: ✓ all applicable live kernel patch modules applied
+patch version: 113.1
+tier: updates (Free usage; This machine beta tests new patches.)
+machine id: abc123
