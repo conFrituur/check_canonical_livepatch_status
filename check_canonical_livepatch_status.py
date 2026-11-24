@@ -18,6 +18,9 @@ class CheckCanonicalLivepatchStatus:
     COMMAND = "canonical-livepatch"
     COMMAND_TIMEOUT = 15
     DEFAULT_STATE_FILE = "/tmp/check_canonical_livepatch_status.state"
+    # The client checks in hourly by default (check-interval, minimum 60 minutes).
+    DEFAULT_WARNING_SECONDS = 3 * 3600
+    DEFAULT_CRITICAL_SECONDS = 6 * 3600
     DEFAULT_PATCHING_WARNING_SECONDS = 2 * 3600
     DEFAULT_PENDING_WARNING_SECONDS = 2 * 3600
     SEVERITY: ClassVar[dict[str, int]] = {"OK": 0, "UNKNOWN": 1, "WARNING": 2, "CRITICAL": 3}
@@ -300,13 +303,17 @@ def main() -> None:
         "--warning-seconds",
         "-w",
         type=int,
-        help="warn when the last check with the Livepatch server is older than this",
+        default=CheckCanonicalLivepatchStatus.DEFAULT_WARNING_SECONDS,
+        help="warn when the last check with the Livepatch server is older than this "
+        "(default: %(default)s)",
     )
     parser.add_argument(
         "--critical-seconds",
         "-c",
         type=int,
-        help="fail when the last check with the Livepatch server is older than this",
+        default=CheckCanonicalLivepatchStatus.DEFAULT_CRITICAL_SECONDS,
+        help="fail when the last check with the Livepatch server is older than this "
+        "(default: %(default)s)",
     )
     parser.add_argument(
         "--patching-warning-seconds",

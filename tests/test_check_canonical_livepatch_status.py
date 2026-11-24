@@ -86,6 +86,17 @@ def test_main_constructs_and_runs_checker() -> None:
     cls.return_value.check_status.assert_called_once_with()
 
 
+def test_main_defaults() -> None:
+    with (
+        patch("sys.argv", ["check_canonical_livepatch_status.py"]),
+        patch("check_canonical_livepatch_status.CheckCanonicalLivepatchStatus") as cls,
+    ):
+        cls.DEFAULT_WARNING_SECONDS = 10800
+        cls.DEFAULT_CRITICAL_SECONDS = 21600
+        main()
+    assert cls.call_args.args[:2] == (10800, 21600)
+
+
 def test_main_rejects_invalid_thresholds() -> None:
     args = ["check_canonical_livepatch_status.py", "-w", "10", "-c", "5"]
     with patch("sys.argv", args), pytest.raises(SystemExit) as exit_info:

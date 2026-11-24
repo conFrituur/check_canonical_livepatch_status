@@ -2,7 +2,7 @@
 
 Icinga/Nagios plugin that checks the Canonical Livepatch client (`canonical-livepatch status`). It requires Python >=3.12 and has no third-party runtime dependencies.
 
-The check runs the client once and evaluates the `kernel state`, `patch state`, `server check-in` and (optionally) `last check` lines of that single output. The worst state wins. Based on the [official status documentation](https://ubuntu.com/security/livepatch/docs/client/how-to-guides/operations/check-client-status/).
+The check runs the client once and evaluates the `kernel state`, `patch state`, `server check-in` and `last check` lines of that single output. The worst state wins. Based on the [official status documentation](https://ubuntu.com/security/livepatch/docs/client/how-to-guides/operations/check-client-status/).
 
 >**AI NOTICE:** This code was derived from my other check plugins and altered with AI. All code has been reviewed and tested by me
 
@@ -22,8 +22,10 @@ options:
   -h, --help            show this help message and exit
   --warning-seconds, -w WARNING_SECONDS
                         warn when the last check with the Livepatch server is older than this
+                        (default: 10800)
   --critical-seconds, -c CRITICAL_SECONDS
                         fail when the last check with the Livepatch server is older than this
+                        (default: 21600)
   --patching-warning-seconds PATCHING_WARNING_SECONDS
                         warn when 'patching the kernel' lasts longer than this (default: 7200)
   --pending-warning-seconds PENDING_WARNING_SECONDS
@@ -37,7 +39,7 @@ options:
 
 The plugin always runs `canonical-livepatch status --format humane` directly (the format is forced because the client switches to YAML when its output is not a terminal) (it does not call sudo), so it must run as a user that is allowed to execute the client.
 
-All thresholds are optional. Without `-w`/`-c` the age of `last check` is not evaluated.
+The client checks in every hour by default (`check-interval`, minimum 60 minutes), so `last check` defaults to WARNING after 3 hours (`-w 10800`) and CRITICAL after 6 hours (`-c 21600`).
 
 ## States
 
