@@ -1,10 +1,17 @@
 # Check_Canonical_Livepatch_Status
+[![Build](https://github.com/conFrituur/check_canonical_livepatch_status/actions/workflows/build.yml/badge.svg)](https://github.com/conFrituur/check_canonical_livepatch_status/actions/workflows/build.yml)
+[![Coverage](https://raw.githubusercontent.com/conFrituur/check_canonical_livepatch_status/refs/heads/coverage-badge/coverage.svg)](https://github.com/conFrituur/check_canonical_livepatch_status/actions/workflows/build.yml)
+[![uv](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FconFrituur%2Fcheck_canonical_livepatch_status%2Frefs%2Fheads%2Fmain%2Fpyproject.toml&style=flat&logo=python&logoColor=lightgrey
+)](https://www.python.org)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 
 Icinga/Nagios plugin that checks the Canonical Livepatch client (`canonical-livepatch status`). It requires Python >=3.12 and has no third-party runtime dependencies.
 
 The check runs the client once and evaluates the `kernel state`, `patch state`, `server check-in` and `last check` lines of that single output. The worst state wins. Based on the [official status documentation](https://ubuntu.com/security/livepatch/docs/client/how-to-guides/operations/check-client-status/).
 
->**AI NOTICE:** This code was derived from my other check plugins and altered with AI. All code has been reviewed and tested by me
+It complements [check_pro_security_status](https://github.com/conFrituur/check_pro_security_status): this looks at pending security updates for the installed packages, the Ubuntu Pro and ESM status and whether a reboot is required.
+
+>**AI NOTICE:** This code was derived from my other check plugins and altered with AI to fit this command.
 
 ## Usage
 
