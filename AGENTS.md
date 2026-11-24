@@ -1,6 +1,6 @@
 # Repository Guidelines
 
-- Code: `check_canonical_livepatch_status.py` (CLI in `main()`, logic in `CheckCanonicalLivepatchStatus`). Tests: `tests/test_check_canonical_livepatch_status.py`, sample client output in `tests/Outputs/`. Python >=3.12, no runtime dependencies.
+- Code: `check_canonical_livepatch_status.py` (CLI in `main()`, logic in `CheckCanonicalLivepatchStatus`). Tests: `tests/test_check_canonical_livepatch_status.py`, sample client output in `tests/output/`. Python >=3.12, no runtime dependencies.
 - Setup: `uv sync --locked --all-extras --dev`
 - Lint: `uv run ruff check`
 - Test (as in CI): `uv run pytest --cov=check_canonical_livepatch_status`

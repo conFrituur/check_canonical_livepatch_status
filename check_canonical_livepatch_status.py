@@ -38,10 +38,10 @@ class CheckCanonicalLivepatchStatus:
     # An in-progress stage is OK until it has lasted longer than its limit.
     PATCH_RULES: ClassVar[list[tuple[str, str, str | None]]] = [
         (r"all applicable .*applied", "OK", None),
-        (r"no live kernel patches available for kernel ", "OK", None),
+        (r"no live(?: kernel )?patch(?:es)? available for kernel ", "OK", None),
         (r"kernel upgraded after a reboot", "OK", None),
         (r"patching the kernel", "OK", "patching"),
-        (r"live kernel patches are downloaded, but the kernel module", "OK", "pending"),
+        (r"live(?: kernel )?patch(?:es)? are downloaded, but the kernel module", "OK", "pending"),
         (r"kernel .+ contains a vulnerability that cannot be remediated", "WARNING", None),
         (r"Livepatch kernel module inserted but kernel bug detected", "CRITICAL", None),
         (r"detected a crash last time", "CRITICAL", None),

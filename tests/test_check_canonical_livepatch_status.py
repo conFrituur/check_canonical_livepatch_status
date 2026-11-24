@@ -12,7 +12,7 @@ from check_canonical_livepatch_status import (
 )
 
 NOW = datetime(2026, 10, 25, 15, 15, tzinfo=UTC)
-OUTPUTS = Path(__file__).parent / "Outputs"
+OUTPUT = Path(__file__).parent / "output"
 OK_KERNEL = "✓ kernel series 5.4 is covered by Livepatch"
 OK_PATCH = "✓ all applicable live kernel patch modules applied"
 
@@ -111,7 +111,7 @@ def test_invalid_thresholds(kwargs) -> None:
 
 def test_verbatim_documented_output_is_ok(state_file, capsys) -> None:
     check = make_check(state_file)
-    code, out = run_check(check, (OUTPUTS / "ok.txt").read_text(), capsys)
+    code, out = run_check(check, (OUTPUT / "ok.txt").read_text(), capsys)
     assert code == 0
     assert out == (
         "OK - kernel 5.4.0-216.236-generic: kernel series 5.4 is covered by "
@@ -166,6 +166,8 @@ def test_kernel_states(kernel_state, code, state_file, capsys) -> None:
     [
         ("✓ all applicable live kernel patch modules applied", 0),
         ("✓ no live kernel patches available for kernel 5.4.0-216-generic", 0),
+        ("✓ no livepatches available for kernel 7.0.0-44.44-generic", 0),
+        ("✓ all applicable livepatch kernel modules applied", 0),
         ("✓ kernel upgraded after a reboot", 0),
         (
             ("✗ kernel 5.4.0-216-generic contains a vulnerability that cannot be "
@@ -284,7 +286,14 @@ PATCHING = "⧗ patching the kernel"
 PENDING = "⧗ live kernel patches are downloaded, but the kernel module is not yet inserted"
 
 
-@pytest.mark.parametrize("patch_state", [PATCHING, PENDING])
+@pytest.mark.parametrize(
+    "patch_state",
+    [
+        PATCHING,
+        PENDING,
+        "⧗ livepatches are downloaded, but the kernel module is not yet inserted",
+    ],
+)
 def test_in_progress_first_seen_is_ok_and_recorded(
     patch_state, state_file, capsys
 ) -> None:
@@ -493,3 +502,13 @@ def test_nagios_exit_codes(capsys) -> None:
             CheckCanonicalLivepatchStatus.nagios_exit(status, "msg")
         assert exit_info.value.code == code
         assert capsys.readouterr().out == f"{status} - msg\n"
+
+
+def test_real_client_output_without_patches_is_ok(state_file, capsys) -> None:
+    check = make_check(state_file)
+    code, out = run_check(check, (OUTPUT / "no_patches.txt").read_text(), capsys)
+    assert code == 0
+    assert out == (
+        "OK - kernel 7.0.0-44.44-generic: kernel series 7.0 is covered by "
+        "Livepatch; no livepatches available for kernel 7.0.0-44.44-generic"
+    )

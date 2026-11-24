@@ -1,0 +1,7 @@
+last check: 45 minutes ago
+kernel: 7.0.0-44.44-generic
+server check-in: succeeded
+kernel state: ✓ kernel series 7.0 is covered by Livepatch
+patch state: ✓ no livepatches available for kernel 7.0.0-44.44-generic
+tier: updates (Free usage; This machine beta tests new patches.)
+machine id: 1a50b36f8132f3a9f33a00007669dcf0
