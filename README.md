@@ -5,9 +5,7 @@
 )](https://www.python.org)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 
-Icinga/Nagios plugin that checks the Canonical Livepatch client (`canonical-livepatch status`). It requires Python >=3.12 and has no third-party runtime dependencies.
-
-The check runs the client once and evaluates the `kernel state`, `patch state`, `server check-in` and `last check` lines of that single output. The worst state wins. Based on the [official status documentation](https://ubuntu.com/security/livepatch/docs/client/how-to-guides/operations/check-client-status/).
+Icinga/Nagios plugin that checks the Canonical Livepatch client (`canonical-livepatch status`) [official status documentation](https://ubuntu.com/security/livepatch/docs/client/how-to-guides/operations/check-client-status/).
 
 It complements [check_pro_security_status](https://github.com/conFrituur/check_pro_security_status): this looks at pending security updates for the installed packages, the Ubuntu Pro and ESM status and whether a reboot is required.
 
